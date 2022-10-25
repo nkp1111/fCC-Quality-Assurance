@@ -2,7 +2,7 @@ function ConvertHandler() {
 
   this.getNum = function (input) {
 
-    let result = input.split(/[a-z]/)[0]
+    let result = input.split(/[a-z]/)[0] || 1
 
     return result;
   };
@@ -20,14 +20,14 @@ function ConvertHandler() {
       'mi': 'km', 'km': 'mi',
       'kg': 'lbs', 'lbs': 'kg'
     }
-    let result = unitConversion[initUnit]
+    let result = unitConversion[initUnit.toLowerCase()] || 'invalid unit'
 
     return result;
   };
 
   this.spellOutUnit = function (unit) {
     const spell = { 'gal': 'gallons', 'l': 'litres', 'mi': 'miles', 'km': 'kilometers', 'lbs': 'pounds', 'kg': 'kilograms' }
-    let result = spell[unit]
+    let result = spell[unit.toLowerCase()]
 
     return result;
   };
@@ -36,36 +36,37 @@ function ConvertHandler() {
     const galToL = 3.78541;
     const lbsToKg = 0.453592;
     const miToKm = 1.60934;
+    initNum = parseInt(initNum)
     let result
     switch (initUnit) {
       case 'gal':
-        result = initNum * galToL
-        break
-      case 'l':
-        result = initNum / galToL
-        break
+        result = initNum * galToL;
+        break;
+      case 'L':
+        result = initNum / galToL;
+        break;
       case 'lbs':
-        result = initNum * lbsToKg
-        break
+        result = initNum * lbsToKg;
+        break;
       case 'kg':
-        result = initNum / lbsTokg
-        break
+        result = initNum / lbsToKg;
+        break;
       case 'mi':
-        result = initNum * miToKm
-        break
+        result = initNum * miToKm;
+        break;
       case 'km':
-        result = initNum / miTokm
-        break
+        result = initNum / miToKm;
+        break;
       default:
-        result = 'invalid unit'
-        break
+        result = 'invalid unit';
+        break;
     }
 
-    return result;
+    return result.toFixed(5);
   };
 
   this.getString = function (initNum, initUnit, returnNum, returnUnit) {
-    let result = `${initNum} ${this.spellOutUnit(initNum)} converts to ${returnNum} ${this.spellOutUnit(returnUnit)}`
+    let result = `${initNum} ${this.spellOutUnit(initUnit)} converts to ${returnNum} ${this.spellOutUnit(returnUnit)}`
 
     return result;
   };

@@ -3,7 +3,6 @@ function ConvertHandler() {
   this.getNum = function (input) {
 
     let result = input.split(/[a-z]/)[0] || 1
-
     return result;
   };
 
@@ -26,7 +25,7 @@ function ConvertHandler() {
   };
 
   this.spellOutUnit = function (unit) {
-    const spell = { 'gal': 'gallons', 'l': 'litres', 'mi': 'miles', 'km': 'kilometers', 'lbs': 'pounds', 'kg': 'kilograms' }
+    const spell = { 'gal': 'gallons', 'l': 'Liter', 'mi': 'miles', 'km': 'kilometers', 'lbs': 'pounds', 'kg': 'kilograms' }
     let result = spell[unit.toLowerCase()]
 
     return result;
@@ -38,11 +37,12 @@ function ConvertHandler() {
     const miToKm = 1.60934;
     initNum = parseInt(initNum)
     let result
+    initUnit = initUnit.toLowerCase()
     switch (initUnit) {
       case 'gal':
         result = initNum * galToL;
         break;
-      case 'L':
+      case 'l':
         result = initNum / galToL;
         break;
       case 'lbs':
@@ -59,10 +59,9 @@ function ConvertHandler() {
         break;
       default:
         result = 'invalid unit';
-        break;
     }
 
-    return result.toFixed(5);
+    return result === 'invalid unit' ? 'invalid unit' : result.toFixed(5);
   };
 
   this.getString = function (initNum, initUnit, returnNum, returnUnit) {

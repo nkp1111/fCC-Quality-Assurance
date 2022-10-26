@@ -18,8 +18,10 @@ function ConvertHandler() {
     const possUnit = input.split(/[0-9]/)
     let result = possUnit[possUnit.length - 1]
 
-    if (result === 'l') {
+    if (result === 'l' || result === 'L') {
       result = 'L'
+    } else {
+      result = result.toLowerCase()
     }
 
     return result;

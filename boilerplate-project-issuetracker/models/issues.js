@@ -13,21 +13,27 @@ const issueSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
-  update_on: {
+  updated_on: {
     type: Date,
-    default: new Date()
+    default: new Date(),
   },
   created_by: {
     type: String,
     required: true
   },
   assigned_to: {
-    type: String
+    type: String,
+    default: ''
   },
   open: {
-    type: Boolean
+    type: Boolean,
+    default: true
   },
   status_text: {
+    type: String,
+    default: ''
+  },
+  project_name: {
     type: String
   }
 })

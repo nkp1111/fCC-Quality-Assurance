@@ -42,7 +42,6 @@ module.exports = function (app) {
     .delete(async function (req, res) {
       //if successful response will be 'complete delete successful'
       const delRes = await Library.remove({})
-      console.log(delRes)
       res.send('complete delete successful')
     });
 
@@ -52,7 +51,6 @@ module.exports = function (app) {
     .get(async function (req, res) {
       let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
-      console.log(bookid)
       const book = await Library.findOne({ _id: bookid })
       if (!book) {
         res.send('no book exists')
@@ -64,17 +62,33 @@ module.exports = function (app) {
           comments: book.comments
         }
 
-        console.log(book, bookDetail)
         res.json(bookDetail)
       }
     })
 
-    .post(function (req, res) {
+    .post(async function (req, res) {
       let bookid = req.params.id;
       let comment = req.body.comment;
       //json res format same as .get
-      res.json('post comment')
+      if (!comment) {
+        res.send('missing required field comment')
+      }
+      else {
+        const book = await Library.findById(bookid)
+        if (book) {
+          book.comments.push(comment)
+          const savedBook = await book.save()
+          const bookData = {
+            _id: savedBook._id,
+            title: savedBook.title,
+            comments: savedBook.comments
+          }
+          res.json(bookData)
 
+        } else {
+          res.send('no book exists')
+        }
+      }
     })
 
     .delete(async function (req, res) {

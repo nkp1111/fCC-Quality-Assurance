@@ -49,27 +49,43 @@ module.exports = function (app) {
 
 
   app.route('/api/books/:id')
-    .get(function (req, res) {
+    .get(async function (req, res) {
       let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
-      console.log("4", bookid)
-      res.json('detail book')
+      console.log(bookid)
+      const book = await Library.findOne({ _id: bookid })
+      if (!book) {
+        res.send('no book exists')
+      }
+      else {
+        const bookDetail = {
+          _id: book._id,
+          title: book.title,
+          comments: book.comments
+        }
+
+        console.log(book, bookDetail)
+        res.json(bookDetail)
+      }
     })
 
     .post(function (req, res) {
       let bookid = req.params.id;
       let comment = req.body.comment;
       //json res format same as .get
-      console.log('5', comment)
       res.json('post comment')
 
     })
 
-    .delete(function (req, res) {
+    .delete(async function (req, res) {
       let bookid = req.params.id;
       //if successful response will be 'delete successful'
-      console.log(req.params, req.body)
-      res.send('delete successful')
+      const delRes = await Library.findOneAndDelete({ _id: bookid })
+      if (delRes) {
+        res.send('delete successful')
+      } else {
+        res.send('no book exists')
+      }
     });
 
 };

@@ -20,30 +20,19 @@ class SudokuSolver {
       return 'Invalid characters in puzzle'
     }
 
-    // check for invalid puzzle
-    // check all rows for same characters
-    // checkRowPlacement(puzzleString, row, column, value)
-
-    // check all columns for same characters
-    // check region placement
-    // sum of all 1-9 equals 45
-
     // if alls well
     return true
-
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
     // row string
     const rowString = puzzleString.substring((row - 1) * 9, row * 9)
     const rowVal = rowString.split('').filter((d, i) => {
-      console.log(d, i, i + 1, column, rowString.split(''))
       if (i + 1 != column && d === value) {
         return d
       }
     })
 
-    console.log('rowVal', rowVal)
     if (rowVal.length >= 1) {
       return false
     } else {
@@ -69,7 +58,6 @@ class SudokuSolver {
       }
     })
 
-    console.log('colVal', colVal)
     if (colVal.length >= 1) {
       return false
     } else {
@@ -96,7 +84,6 @@ class SudokuSolver {
       }
     })
 
-    console.log('regionVal', regionVal)
     if (regionVal.length >= 1) {
       return false
     } else {
@@ -105,7 +92,28 @@ class SudokuSolver {
   }
 
   solve(puzzleString) {
+    const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    const possibleAns = puzzleString.split('').map((d, i) => {
+      if (d === '.') {
+        let rowNum = Math.floor(i / 9) + 1
+        let colNum = Math.floor(i % 9) + 1
+        for (let num of numbers) {
+          const regionResult = this.checkRegionPlacement(puzzleString, rowNum, colNum, num)
+          const rowResult = this.checkRowPlacement(puzzleString, rowNum, colNum, num)
+          const colResult = this.checkColPlacement(puzzleString, rowNum, colNum, num)
+          console.log(regionResult, rowResult, colResult)
+          if (regionResult && rowResult && colResult) {
+            return num
+          }
+        }
+      } else {
+        return d
+      }
+    }).join('')
 
+    return possibleAns.includes('.')
+      ? false
+      : possibleAns
   }
 }
 

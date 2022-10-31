@@ -82,6 +82,12 @@ module.exports = function (app) {
       if (validation !== true) {
         res.send({ error: validation })
       }
-      res.send(req.body)
+
+      let solution = solver.solve(puzzle)
+      if (!solution) {
+        res.send({ error: 'Puzzle cannot be solved' })
+      }
+
+      res.send({ solution: solution })
     });
 };

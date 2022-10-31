@@ -6,6 +6,7 @@ class SudokuSolver {
     if (puzzlePieces.length !== 81) {
       return 'Expected puzzle to be 81 characters long'
     }
+
     puzzlePieces = puzzlePieces.filter((ele) => {
       if (/\d/.test(ele) || ele === '.') {
         return ele

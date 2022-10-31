@@ -13,74 +13,58 @@ module.exports = function (app) {
       // if any value is missing
       if (!puzzle || !coordinate || !value) {
         res.send({ error: 'Required field(s) missing' })
+        return
       }
 
       // validation 
       let validation = solver.validate(puzzle)
       if (validation !== true) {
         res.send({ error: validation })
+        return
       }
 
       // to check coordinates validity
-      if (coordinate.length !== 2 || !/[a-i][1-9]/i.test(coordinate)) {
+      if (!/^[a-i][1-9]$/i.test(coordinate)) {
+        console.log('invalid coor', coordinate)
         res.send({ error: 'Invalid coordinate' })
+        return
       }
 
       // to check for value validity
       if (value.length !== 1 || !/[1-9]/.test(value)) {
+        console.log('invalid value', value)
         res.send({ error: 'Invalid value' })
+        return
       }
 
+      console.log('inputs', puzzle, coordinate, value)
       // coordinates
       const checkRow = { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9 }
-      const rowNum = checkRow[coordinate.split('')[0]]
+      const rowNum = checkRow[(coordinate.split('')[0]).toLowerCase()]
       const colNum = coordinate.split('')[1]
-      // row string
-      const row = puzzle.substring((rowNum - 1) * 9, rowNum * 9)
 
-      // column string
-      let colCount = colNum
-      const column = puzzle.split('').filter((d, i) => {
-        if (i % 9 === 0) {
-          colCount = colNum
-        }
-        colCount--
-        if (colCount === 0) {
-          return d
-        }
-      }).join('')
-
-      // region string
-      let rowCount = 0
-      const region = puzzle.split('').filter((d, i) => {
-        if (Math.floor(i / 9) !== rowCount) {
-          rowCount += 1
-        }
-        if (Math.floor(rowCount / 3) === Math.floor(rowNum / 3)) {
-          if (Math.floor((i % 9) / 3) === Math.floor(colNum / 3)) {
-            return d
-          }
-        }
-      }).join('')
-
+      console.log(rowNum, colNum)
       // check row placement
-      const rowResult = solver.checkRowPlacement(puzzle, row, column, value)
+      const rowResult = solver.checkRowPlacement(puzzle, rowNum, colNum, value)
+
       // check column placement
-      const columnResult = solver.checkColPlacement(puzzle, row, column, value)
+      const columnResult = solver.checkColPlacement(puzzle, rowNum, colNum, value)
 
       // check region placement
-      const regionResult = solver.checkRegionPlacement(puzzleString, row, column, region, value)
+      const regionResult = solver.checkRegionPlacement(puzzle, rowNum, colNum, value)
+
+      console.log('results', rowResult, columnResult, regionResult)
 
       if (regionResult === false || columnResult === false || rowResult === false) {
         let conflict = []
-        if (!regionResult) {
-          conflict.push("region")
+        if (!rowResult) {
+          conflict.push("row")
         }
         if (!columnResult) {
           conflict.push("column")
         }
-        if (!rowResult) {
-          conflict.push("row")
+        if (!regionResult) {
+          conflict.push("region")
         }
         console.log({ valid: false, conflict: conflict })
         res.send({ valid: false, conflict: conflict })

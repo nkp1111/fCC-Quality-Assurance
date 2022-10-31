@@ -22,7 +22,7 @@ class SudokuSolver {
 
     // check for invalid puzzle
     // check all rows for same characters
-    // this.checkRowPlacement(puzzleString, row, column, value)
+    // checkRowPlacement(puzzleString, row, column, value)
 
     // check all columns for same characters
     // check region placement
@@ -34,19 +34,61 @@ class SudokuSolver {
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
-    puzzleString.map(d => {
-      if (puzzleString.includes(d)) {
+    // row string
+    const rowString = puzzleString.substring((row - 1) * 9, row * 9)
+    const rowVal = rowString.split('').filter(d => d === value)
 
-      }
-    })
+    console.log('rowVal', rowVal)
+    if (rowVal.length !== 1) {
+      return false
+    } else {
+      return true
+    }
   }
 
   checkColPlacement(puzzleString, row, column, value) {
+    // column string
+    let colCount = column
+    const columnString = puzzleString.split('').filter((d, i) => {
+      if (i % 9 === 0) {
+        colCount = column
+      }
+      colCount--
+      if (colCount === 0) {
+        return d
+      }
+    }).join('')
+    const colVal = columnString.split('').filter(d => d === value)
 
+    console.log('colVal', colVal)
+    if (colVal.length !== 1) {
+      return false
+    } else {
+      return true
+    }
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
+    // region string
+    let rowCount = 0
+    const region = puzzleString.split('').filter((d, i) => {
+      if (Math.floor(i / 9) !== rowCount) {
+        rowCount += 1
+      }
+      if (Math.floor(rowCount / 3) === Math.floor(row / 3)) {
+        if (Math.floor((i % 9) / 3) === Math.floor(column / 3)) {
+          return d
+        }
+      }
+    }).join('')
+    const regionVal = region.split('').filter(d => d === value)
 
+    console.log('regionVal', regionVal)
+    if (regionVal.length !== 1) {
+      return false
+    } else {
+      return true
+    }
   }
 
   solve(puzzleString) {

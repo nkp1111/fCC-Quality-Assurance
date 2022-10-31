@@ -25,25 +25,23 @@ module.exports = function (app) {
 
       // to check coordinates validity
       if (!/^[a-i][1-9]$/i.test(coordinate)) {
-        console.log('invalid coor', coordinate)
+        // console.log('invalid coor', coordinate)
         res.send({ error: 'Invalid coordinate' })
         return
       }
 
       // to check for value validity
       if (value.length !== 1 || !/[1-9]/.test(value)) {
-        console.log('invalid value', value)
+        // console.log('invalid value', value)
         res.send({ error: 'Invalid value' })
         return
       }
 
-      console.log('inputs', puzzle, coordinate, value)
       // coordinates
       const checkRow = { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9 }
       const rowNum = checkRow[(coordinate.split('')[0]).toLowerCase()]
       const colNum = coordinate.split('')[1]
 
-      console.log(rowNum, colNum)
       // check row placement
       const rowResult = solver.checkRowPlacement(puzzle, rowNum, colNum, value)
 
@@ -52,8 +50,7 @@ module.exports = function (app) {
 
       // check region placement
       const regionResult = solver.checkRegionPlacement(puzzle, rowNum, colNum, value)
-
-      console.log('results', rowResult, columnResult, regionResult)
+      // console.log('results', rowResult, columnResult, regionResult)
 
       if (regionResult === false || columnResult === false || rowResult === false) {
         let conflict = []
@@ -66,16 +63,14 @@ module.exports = function (app) {
         if (!regionResult) {
           conflict.push("region")
         }
-        console.log({ valid: false, conflict: conflict })
         res.send({ valid: false, conflict: conflict })
       }
-      console.log({ valid: true })
       res.send({ valid: true })
     });
 
   app.route('/api/solve')
     .post((req, res) => {
-      const { puzzle, value, coordinate } = req.body
+      const { puzzle } = req.body
 
       // if no puzzle
       if (!puzzle) {

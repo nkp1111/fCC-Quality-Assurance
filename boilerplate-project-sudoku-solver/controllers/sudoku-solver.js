@@ -36,10 +36,15 @@ class SudokuSolver {
   checkRowPlacement(puzzleString, row, column, value) {
     // row string
     const rowString = puzzleString.substring((row - 1) * 9, row * 9)
-    const rowVal = rowString.split('').filter(d => d === value)
+    const rowVal = rowString.split('').filter((d, i) => {
+      console.log(d, i, i + 1, column, rowString.split(''))
+      if (i + 1 != column && d === value) {
+        return d
+      }
+    })
 
     console.log('rowVal', rowVal)
-    if (rowVal.length !== 1) {
+    if (rowVal.length >= 1) {
       return false
     } else {
       return true
@@ -58,10 +63,14 @@ class SudokuSolver {
         return d
       }
     }).join('')
-    const colVal = columnString.split('').filter(d => d === value)
+    const colVal = columnString.split('').filter((d, i) => {
+      if (i + 1 != row && d === value) {
+        return d
+      }
+    })
 
     console.log('colVal', colVal)
-    if (colVal.length !== 1) {
+    if (colVal.length >= 1) {
       return false
     } else {
       return true
@@ -81,10 +90,14 @@ class SudokuSolver {
         }
       }
     }).join('')
-    const regionVal = region.split('').filter(d => d === value)
+    const regionVal = region.split('').filter((d, i) => {
+      if (i + 1 != row && d === value) {
+        return d
+      }
+    })
 
     console.log('regionVal', regionVal)
-    if (regionVal.length !== 1) {
+    if (regionVal.length >= 1) {
       return false
     } else {
       return true

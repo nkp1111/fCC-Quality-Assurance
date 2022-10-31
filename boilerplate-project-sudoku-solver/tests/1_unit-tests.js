@@ -17,4 +17,5 @@ suite('Unit Tests', () => {
   test('#2 handle puzzle with invalid characters (not 1-9 or .)', function () {
     assert.equal(solver.validate(invalidPuzzleString), 'Invalid characters in puzzle')
   })
+
 });

@@ -33,6 +33,7 @@ class SudokuSolver {
       }
     })
 
+    console.log('row', value, rowString)
     if (rowVal.length >= 1) {
       return false
     } else {
@@ -58,6 +59,7 @@ class SudokuSolver {
       }
     })
 
+    console.log('column', value, columnString)
     if (colVal.length >= 1) {
       return false
     } else {
@@ -84,6 +86,7 @@ class SudokuSolver {
       }
     })
 
+    console.log('region', value, region)
     if (regionVal.length >= 1) {
       return false
     } else {
@@ -92,8 +95,15 @@ class SudokuSolver {
   }
 
   solve(puzzleString) {
-    const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    // to check whether puzzle can be solved
+    let ans = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    // puzzleString is valid
+    const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
     const possibleAns = puzzleString.split('').map((d, i) => {
+
+      // possible answer
       if (d === '.') {
         let rowNum = Math.floor(i / 9) + 1
         let colNum = Math.floor(i % 9) + 1
@@ -103,18 +113,28 @@ class SudokuSolver {
           const colResult = this.checkColPlacement(puzzleString, rowNum, colNum, num)
           console.log(regionResult, rowResult, colResult)
           if (regionResult && rowResult && colResult) {
+            console.log(num)
             return num
           }
         }
       } else {
         return d
       }
+
     }).join('')
+
+    console.log(possibleAns)
+    possibleAns.split('').map((d, i) => {
+      ans[i] += +d
+    })
 
     return possibleAns.includes('.')
       ? false
-      : possibleAns
+      : ans.filter(d => d !== 45).length > 0
+        ? false
+        : possibleAns
   }
+
 }
 
 module.exports = SudokuSolver;

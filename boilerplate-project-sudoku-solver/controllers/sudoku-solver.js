@@ -28,12 +28,12 @@ class SudokuSolver {
     // row string
     const rowString = puzzleString.substring((row - 1) * 9, row * 9)
     const rowVal = rowString.split('').filter((d, i) => {
-      if (i + 1 != column && d === value) {
+      if (i + 1 != column && d == value) {
         return d
       }
     })
 
-    console.log('row', value, rowString)
+    // console.log(rowString, row, column, value, rowVal.length)
     if (rowVal.length >= 1) {
       return false
     } else {
@@ -54,12 +54,11 @@ class SudokuSolver {
       }
     }).join('')
     const colVal = columnString.split('').filter((d, i) => {
-      if (i + 1 != row && d === value) {
+      if (i + 1 != row && d == value) {
         return d
       }
     })
 
-    console.log('column', value, columnString)
     if (colVal.length >= 1) {
       return false
     } else {
@@ -69,24 +68,19 @@ class SudokuSolver {
 
   checkRegionPlacement(puzzleString, row, column, value) {
     // region string
-    let rowCount = 0
     const region = puzzleString.split('').filter((d, i) => {
-      if (Math.floor(i / 9) !== rowCount) {
-        rowCount += 1
-      }
-      if (Math.floor(rowCount / 3) === Math.floor(row / 3)) {
+      if (Math.floor(Math.floor(i / 9) / 3) === Math.floor(row / 3)) {
         if (Math.floor((i % 9) / 3) === Math.floor(column / 3)) {
           return d
         }
       }
     }).join('')
     const regionVal = region.split('').filter((d, i) => {
-      if (i + 1 != row && d === value) {
+      if (i + 1 != row && d == value) {
         return d
       }
     })
 
-    console.log('region', value, region)
     if (regionVal.length >= 1) {
       return false
     } else {
@@ -101,38 +95,36 @@ class SudokuSolver {
 
     // puzzleString is valid
     const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-    const possibleAns = puzzleString.split('').map((d, i) => {
+    let newPuzzleString = puzzleString
+    let puzzleArr = newPuzzleString.split('')
+    for (let i = 0; i < puzzleArr.length; i++) {
+      if (puzzleArr[i] === '.') {
+        let row = Math.floor(i / 9) + 1
+        let col = Math.floor(i % 9) + 1
 
-      // possible answer
-      if (d === '.') {
-        let rowNum = Math.floor(i / 9) + 1
-        let colNum = Math.floor(i % 9) + 1
         for (let num of numbers) {
-          const regionResult = this.checkRegionPlacement(puzzleString, rowNum, colNum, num)
-          const rowResult = this.checkRowPlacement(puzzleString, rowNum, colNum, num)
-          const colResult = this.checkColPlacement(puzzleString, rowNum, colNum, num)
-          console.log(regionResult, rowResult, colResult)
-          if (regionResult && rowResult && colResult) {
-            console.log(num)
-            return num
+          let value = num
+          const rowResult = this.checkRowPlacement(puzzleString, row, col, value)
+          const colResult = this.checkColPlacement(puzzleString, row, col, value)
+          const regionResult = this.checkRegionPlacement(puzzleString, row, col, value)
+          if (rowResult && colResult && regionResult) {
+            puzzleArr[i] = value
+            newPuzzleString = puzzleArr.join('')
           }
         }
-      } else {
-        return d
       }
+    }
 
-    }).join('')
-
-    console.log(possibleAns)
-    possibleAns.split('').map((d, i) => {
+    // console.log(puzzleArr)
+    puzzleArr.map((d, i) => {
       ans[i] += +d
     })
 
-    return possibleAns.includes('.')
+    return puzzleArr.includes('.')
       ? false
       : ans.filter(d => d !== 45).length > 0
         ? false
-        : possibleAns
+        : puzzleArr.join('')
   }
 
 }

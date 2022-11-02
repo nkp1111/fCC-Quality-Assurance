@@ -21,6 +21,9 @@ class Translator {
         textArr[i] = `<span class="highlight">${americanToBritishSpelling[textArr[i]]}</span>`
       }
       // for time 
+      if (/^[0-9]+:[0-9]+$/.test(textArr[i])) {
+        textArr[i] = `<span class="highlight">${textArr[i].split(':').join('.')}</span>`
+      }
 
     }
     return textArr

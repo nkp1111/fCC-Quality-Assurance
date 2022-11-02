@@ -12,24 +12,11 @@ class SudokuSolver {
       return 'Expected puzzle to be 81 characters long'
     }
 
-    // // filter invalid characters
-    // puzzlePieces = puzzlePieces.filter((ele) => {
-    //   if (/\d/.test(ele) || ele === '.') {
-    //     return ele
-    //   } else {
-    //     return 'Invalid characters in puzzle'
-    //   }  
-    // })
-
+    // check invalid characterr
     for (let p of puzzlePieces) {
       if (!/\d/.test(p) && p !== '.') {
         return 'Invalid characters in puzzle'
       }
-    }
-
-    // check for valid characters length
-    if (puzzlePieces.length !== 81) {
-      return 'Invalid characters in puzzle'
     }
 
     // if alls well

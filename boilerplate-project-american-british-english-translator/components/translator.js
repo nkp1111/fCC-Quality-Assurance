@@ -7,11 +7,13 @@ class Translator {
   translate(text, locale) {
     const textParts = text.split(' ')
     if (locale === 'british-to-american') {
-      return this.BritishToAmerican(textParts).join(' ')
+      const translated = this.BritishToAmerican(textParts).join(' ')
+      return translated === text ? "Everything looks good to me!" : translated
     }
 
     if (locale === 'american-to-british') {
-      return this.AmericanToBritish(textParts).join(' ')
+      const translated = this.AmericanToBritish(textParts).join(' ')
+      return translated === text ? "Everything looks good to me!" : translated
     }
   }
 

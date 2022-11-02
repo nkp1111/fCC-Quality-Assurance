@@ -17,15 +17,23 @@ class Translator {
 
   AmericanToBritish(textArr) {
     for (let i = 0; i < textArr.length; i++) {
-      if (americanToBritishSpelling[textArr[i]]) {
-        textArr[i] = `<span class="highlight">${americanToBritishSpelling[textArr[i]]}</span>`
+      let translSpell = americanToBritishSpelling[textArr[i]]
+      let transTitle = americanToBritishTitles[textArr[i].toLowerCase()]
+
+      if (translSpell) {
+        textArr[i] = this.highlightTranslated(translSpell)
       }
       // for time 
       if (/^[0-9]+:[0-9]+$/.test(textArr[i])) {
-        textArr[i] = `<span class="highlight">${textArr[i].split(':').join('.')}</span>`
+        let translDate = textArr[i].split(':').join('.')
+        textArr[i] = this.highlightTranslated(translDate)
       }
-
+      // for title
+      if (americanToBritishTitles[textArr[i].toLowerCase()]) {
+        textArr[i] = this.highlightTranslated(transTitle[0].toUpperCase() + transTitle.substring(1))
+      }
     }
+
     return textArr
   }
 
@@ -36,6 +44,10 @@ class Translator {
       }
     }
     return textArr
+  }
+
+  highlightTranslated(text) {
+    return `<span class="highlight">${text}</span>`
   }
 
 }

@@ -25,7 +25,7 @@ suite('Unit Tests', () => {
   })
 
   test('#4 a valid row placement', function () {
-    assert.equal(solver.checkRowPlacement(validPuzzleString, 1, 2, 6), true)
+    assert.equal(solver.checkRowPlacement(validPuzzleString, 1, 1, 5), true)
   })
 
   test('#5 an invalid row placement', function () {
@@ -49,15 +49,16 @@ suite('Unit Tests', () => {
   })
 
   test('#10 valid string pass the solver', function () {
-    assert.equal(solver.solve(validPuzzleString), validPuzzleAns)
+    assert.equal(solver.solve(validPuzzleString, 0), true)
   })
 
   test('#11 invalid puzzle string fail the solver', function () {
-    assert.equal(solver.solve(invalidPuzzleString), false)
+    solver.solve(invalidPuzzleString, 0)
+    assert.equal(solver.validSolution(solver.solution), false)
   })
 
   test('#12 incomplete puzzle solve', function () {
-    assert.equal(solver.solve(invalidPuzzleString), validPuzzleAns)
+    assert.equal(solver.solve(validPuzzleString, 0), true)
   })
 
 });

@@ -39,8 +39,8 @@ module.exports = function (app) {
 
       // coordinates
       const checkRow = { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9 }
-      const rowNum = checkRow[(coordinate.split('')[0]).toLowerCase()]
-      const colNum = coordinate.split('')[1]
+      const rowNum = +checkRow[(coordinate.split('')[0]).toLowerCase()]
+      const colNum = +coordinate.split('')[1]
 
       // check row placement
       const rowResult = solver.checkRowPlacement(puzzle, rowNum, colNum, value)
@@ -75,19 +75,25 @@ module.exports = function (app) {
       // if no puzzle
       if (!puzzle) {
         res.send({ error: 'Required field missing' })
+        return
       }
 
       // validation
       let validation = solver.validate(puzzle)
       if (validation !== true) {
         res.send({ error: validation })
+        return
       }
 
-      let solution = solver.solve(puzzle)
-      if (!solution) {
+      let solution = solver.solve(puzzle, 0)
+      let validity = solver.validSolution(solver.solution)
+
+      if (!solution || !validity) {
         res.send({ error: 'Puzzle cannot be solved' })
+        return
+      } else {
+        res.send({ solution: solver.solution })
       }
 
-      res.send({ solution: solution })
     });
 };

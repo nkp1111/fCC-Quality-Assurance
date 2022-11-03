@@ -8,32 +8,18 @@ module.exports = function (app) {
     .get(async function (req, res) {
       // to get all issues with the project name
       let project = req.params.project;
-      const { issue_title, issue_text, created_by, assigned_to, open, status_text } = req.query
+      const { issue_title, issue_text, created_by, assigned_to, open, status_text, _id } = req.query
 
-      const valid = returnDefined(issue_title, issue_text, created_by, assigned_to, open, status_text)
+      const valid = returnDefined(issue_title, issue_text, created_by, assigned_to, open, status_text, _id)
       let issues
 
-      if (issue_title || issue_text || created_by || assigned_to || open || status_text) {
+      if (issue_title || issue_text || created_by || assigned_to || open || status_text || _id) {
         issues = await Issue.find({ project_name: project, ...valid })
       } else {
         issues = await Issue.find({ project_name: project })
       }
 
-      let issuesToSend = issues.map(i => {
-        return {
-          _id: i._id,
-          issue_text: i.issue_text,
-          issue_title: i.issue_title,
-          created_on: i.created_on,
-          updated_on: i.updated_on,
-          created_by: i.created_by,
-          assigned_to: i.assigned_to,
-          open: i.open,
-          status_text: i.status_text
-        }
-      })
-
-      res.json(issuesToSend)
+      res.send(issues)
     })
 
     .post(async function (req, res) {
@@ -72,49 +58,63 @@ module.exports = function (app) {
       let project = req.params.project;
       const { _id, issue_title, issue_text, created_by, assigned_to, status_text, open } = req.body
 
+      // if no id
       if (!_id) {
-        return res.json({ error: 'missing _id' })
+        res.send({ error: 'missing _id' })
+        return
       }
 
-      if (!issue_title && !issue_text && !created_by && !assigned_to && !open && !status_text) {
-        console.log({ error: 'no update field(s) sent', '_id': _id })
-        return res.json({ error: 'no update field(s) sent', '_id': _id })
+      // if no required fields
+      const fields = returnDefined(issue_title, issue_text, created_by, assigned_to, open, status_text)
+      if (Object.keys(fields).length === 0) {
+        res.send({ error: 'no update field(s) sent', '_id': _id })
+        return
       }
-      else {
-        const valuesToUpdate = returnDefined(issue_title, issue_text, created_by, assigned_to, open, status_text)
-        try {
-          await Issue.findByIdAndUpdate(_id, { valuesToUpdate }, { $currentDate: { updated_on: true } })
-          return res.json({ result: 'successfully updated', '_id': _id })
-        } catch (err) {
-          console.log('update', err)
-          return res.json({ error: 'could not update', '_id': _id })
-        }
+
+      // if no issue
+      const issue = await Issue.findOne({ _id })
+      console.log('issue before update', issue)
+      if (!issue) {
+        res.send({ error: 'could not update', '_id': _id })
+        return
       }
+
+      console.log('fields to update', fields)
+      Object.keys(fields).map(field => {
+        issue[field] = fields[field]
+      })
+
+      issue.updated_on = new Date()
+      const issueAfterUpdate = await issue.save()
+      console.log('issue after update', issueAfterUpdate)
+
+      res.send({ result: 'successfully updated', '_id': _id })
     })
 
     .delete(async function (req, res) {
       // delete route to delete a particular issue with id
       let project = req.params.project;
       const { _id } = req.body
-      console.log("delete", _id)
       if (!_id) {
-        return res.json({ error: 'missing _id' })
-      } else {
-        try {
-          await Issue.findByIdAndDelete(_id)
-          return res.json({ result: 'successfully deleted', '_id': _id })
-        }
-        catch (err) {
-          console.log(err)
-          return res.json({ error: 'could not delete', '_id': _id })
-        }
-
+        res.send({ error: 'missing _id' })
+        return
       }
-    })
 
+      const issue = await Issue.findOne({ _id })
+      if (!issue) {
+        res.send({ error: 'could not delete', '_id': _id })
+        return
+      }
+
+      const result = await Issue.deleteOne({ _id })
+      console.log(issue, result)
+      res.send({ result: 'successfully deleted', '_id': _id })
+      return
+    }
+    )
 }
 
-const returnDefined = (issue_title, issue_text, created_by, assigned_to, open, status_text) => {
+const returnDefined = (issue_title, issue_text, created_by, assigned_to, open, status_text, _id) => {
   let defined = {}
   if (issue_title) {
     defined['issue_title'] = issue_title
@@ -122,7 +122,7 @@ const returnDefined = (issue_title, issue_text, created_by, assigned_to, open, s
   if (issue_text) {
     defined['issue_text'] = issue_text
   }
-  if (open) {
+  if (open === true || open === false) {
     defined['open'] = open
   }
   if (created_by) {
@@ -133,6 +133,9 @@ const returnDefined = (issue_title, issue_text, created_by, assigned_to, open, s
   }
   if (status_text) {
     defined['status_text'] = status_text
+  }
+  if (_id) {
+    defined['_id'] = _id
   }
   return defined
 }

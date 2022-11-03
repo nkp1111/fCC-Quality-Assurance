@@ -66,7 +66,6 @@ class Translator {
       // to translate two length words
       textArr = this.getAllKeysAndModify(americanOnly, textArr, i)
     }
-
     return textArr
   }
 
@@ -91,12 +90,9 @@ class Translator {
       if (transTitle) {
         textArr[i] = this.highlightTranslated(transTitle[0].toUpperCase() + transTitle.substring(1))
       }
-
       // to translate two length words
       textArr = this.getAllKeysAndModify(britishOnly, textArr, i)
-
     }
-
     return textArr
   }
 
@@ -138,7 +134,7 @@ class Translator {
     return textArr
   }
 
-
 }
 
 module.exports = Translator;
+

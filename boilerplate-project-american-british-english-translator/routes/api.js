@@ -10,13 +10,13 @@ module.exports = function (app) {
     .post((req, res) => {
       const { text, locale } = req.body
 
-      // if any field is missing
-      if (!req.body) {
-        res.send({ error: 'Required field(s) missing' })
-      }
       // if text is empty
-      if (!text) {
+      if (text === '') {
         res.send({ error: 'No text to translate' })
+      }
+      // if any field is missing
+      if (!text || !locale) {
+        res.send({ error: 'Required field(s) missing' })
       }
       // if locale is invalid
       const possibleLocales = ['british-to-american', 'american-to-british']
